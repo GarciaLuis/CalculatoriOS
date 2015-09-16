@@ -13,10 +13,14 @@ class ViewController: UIViewController
     
     @IBOutlet weak var display: UILabel!
     
+    @IBOutlet weak var history: UILabel!
+    
     var userIsInTheMiddleOfTypingANumber = false
+    var decimalIsPressed = false
     
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
+        
         if userIsInTheMiddleOfTypingANumber {
             display.text = display.text!  + digit
         }
@@ -30,6 +34,7 @@ class ViewController: UIViewController
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
+        
         if userIsInTheMiddleOfTypingANumber{
             enter()
         }
@@ -41,10 +46,30 @@ class ViewController: UIViewController
         case "＋":performOperation({ $0 + $1 })
         case "-":performOperation({ $0 - $1 })
         case "√":performOperation2{ sqrt($0)}
+        case "sin":performOperation2({sin($0)})
+        case "cos":performOperation2({cos($0)})
+        case "∏":performOperation2({$0 * 3.14})
         default: break
+        }
+    }
+    
+    @IBAction func decimal() {
+        userIsInTheMiddleOfTypingANumber = true
+        if decimalIsPressed == false{
+            display.text = display.text! + "."
+            decimalIsPressed = true
         }
         
     }
+    
+    @IBAction func clear() {
+        userIsInTheMiddleOfTypingANumber = false
+        operandStack.removeAll()
+        display.text = "0"
+        enter()
+        
+    }
+    
     
     func performOperation(operation: (Double, Double) -> Double){
         if operandStack.count >= 2{
@@ -63,8 +88,10 @@ class ViewController: UIViewController
     var operandStack = Array<Double>()
     
     @IBAction func enter() {
+        decimalIsPressed = false
         userIsInTheMiddleOfTypingANumber = false
         operandStack.append(displayValue)
+        history.text = "\(displayValue)"
         println("operandStack = \(operandStack)")
     }
     
